@@ -1,0 +1,113 @@
+
+
+ul {
+    list-style: none;
+}
+
+
+button, input[type=submit], input[type=file] {
+    cursor: pointer;
+}
+
+
+button {
+    padding: 2px .5em;
+    text-align: center;
+}
+
+
+button:disabled, input:disabled, label[data-disabled="true"] {
+    color: silver;
+    opacity: .5;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+}
+
+// html, body, #__next {
+//     height: 100%;
+// }
+
+#__next {
+    display: flex;
+    flex-direction: column;
+}
+main {
+    flex-grow: 1;
+}
+
+body {
+    padding: 15px;
+    font-size: 17px;
+    line-height: 1.2em;
+    font-family: Arial, Helvetica, sans-serif;
+    overscroll-behavior: none;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+button, input {
+    font-size: inherit;
+}
+
+button, input[type=submit] {
+    font-size: 15px;
+    width: 100%;
+}
+
+a, a:visited, a:hover, a:focus, a:active {
+    color: black;
+    position: relative;
+    display: inline-flex;
+}
+
+a, a:visited, a:focus, a:active {
+    text-decoration: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: inherit;
+}
+
+.hover-area {
+    @media (hover: hover) {
+        .hover-child {
+            display: none;
+        }
+    }
+    &:hover {
+        .hover-child {
+            display: block;
+        }
+    }
+}
+
+
+@media (hover: none) {
+
+    input[type="range"]::-webkit-slider-thumb {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+    }
+
+    *[data-hide-on-mobile="true"] {
+        display: none;
+    }
+}
+
+
