@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { TTXContext } from "@/pages";
+import { TTXContext } from "@/components/FontColumn";
 import { useFela } from "react-fela";
 
 const inputRule = {

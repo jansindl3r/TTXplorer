@@ -1,69 +1,41 @@
-import Head from "next/head";
-import React, { useEffect, useRef, useState } from "react";
-import { useFela } from "react-fela";
-import FontDump from "@/components/FontDump";
+import React, { createContext, useEffect, useState } from "react";
 import Button from "@/components/Button";
-import FileInput from "@/components/FileInput";
+import FontColumn from "@/components/FontColumn";
+import Head from "next/head";
+import { useFela } from "react-fela";
 
-const buttonWrapperRule = {
+const fontGridRule = ({ rows }) => ({
+  display: "grid",
+  gridTemplateRows: rows.map((row) => `[${row}] auto`).join(" "),
+  gridAutoFlow: "column",
+  gridRowGap: 10,
+  gap: 10,
+});
+
+const layoutRule = () => ({
   display: "flex",
-  "& > * + *": {
-    marginLeft: 10,
-  },
-  marginBottom: 10,
-};
+  flexDirection: "column",
+  padding: 20,
+  gap: 10,
+});
 
-async function processFont(file) {
-  const processFontPython = window.pyodide.globals.get("process_font");
-  const fileContent = new Uint8Array(file);
-  const result = processFontPython(fileContent);
-  return result;
-}
-
-async function exportFont(fontXml) {
-  const exportFontPython = window.pyodide.globals.get("export_font");
-  const result = exportFontPython(fontXml);
-  return result;
-}
-
-function filterAllXmlComments(src) {
-  return src.replace(/<!--[\s\S]*?-->/g, "");
-}
-
-export const TTXContext = React.createContext();
+export const IndexContext = createContext();
 
 function Index() {
-  const { css } = useFela();
-  const [output, setOutput] = useState(null);
-  const [fileName, setFileName] = useState(null);
-  const rawXmlFont = useRef(null);
+  const [numberOfFonts, setNumberOfFonts] = useState([0]);
+  const [rows, setRowsOriginal] = useState(["__buttons__"]);
 
-  async function handleOnChange(e) {
-    setFileName(e.target.files[0].name);
-    const arrayBuffer = await e.target.files[0].arrayBuffer();
-    const fontXml = await processFont(arrayBuffer);
-    setOutput(fontXml);
-    const parser = new DOMParser();
-    const xmlData = parser.parseFromString(fontXml, "application/xml");
-    rawXmlFont.current = xmlData;
+  function setRows(rows) {
+    setRowsOriginal([
+      "__buttons__",
+      ...rows.filter((row) => rows.includes(row)),
+    ]);
   }
 
-  async function handleOnExport(e) {
-    const rawXmlFontString = new XMLSerializer().serializeToString(
-      rawXmlFont.current
-    );
-    exportFont(rawXmlFontString)
-      .then((base64Data) => {
-        const link = document.createElement("a");
-        link.href = `data:application/octet-stream;base64,${base64Data}`;
-        link.download = `TTXplorer_${fileName}`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+  const { css } = useFela({ rows });
+
+  function handleOnAddFontClick(e) {
+    setNumberOfFonts([...numberOfFonts, e.timeStamp]);
   }
 
   useEffect(() => {
@@ -105,21 +77,18 @@ function Index() {
       <Head>
         <script src="https://cdn.jsdelivr.net/pyodide/v0.27.2/full/pyodide.js"></script>
       </Head>
-      <TTXContext.Provider value={{ rawXmlFont }}>
-        <div>
-          <div className={css(buttonWrapperRule)}>
-            <FileInput
-              onChange={handleOnChange}
-              label="1. Choose File"
-            ></FileInput>
-            <Button type="button" onClick={handleOnExport}>
-              2. Export
-            </Button>
-            <Button type="button">3. Add Another Font to Compare (To Do)</Button>
+      <IndexContext.Provider value={{ rows, setRows }}>
+        <div className={css(layoutRule)}>
+          <div>
+            <Button onClick={handleOnAddFontClick}>Add Font</Button>
           </div>
-          {output && <FontDump src={filterAllXmlComments(output)} />}
+          <div className={css(fontGridRule)}>
+            {numberOfFonts.map((font, index) => (
+              <FontColumn key={index} />
+            ))}
+          </div>
         </div>
-      </TTXContext.Provider>
+      </IndexContext.Provider>
     </>
   );
 }
