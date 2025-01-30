@@ -49,7 +49,7 @@ function Row({ child, columnKeys, level, pathKeys }) {
           {(child.getAttribute(columnKey) || (columnKey === "textContent")) && (
             <Input
               type={
-                child.tagName === "assembly" && uniqueKey === "textContent"
+                child.tagName === "assembly" && columnKey === "textContent"
                   ? "textarea"
                   : "text"
               }
