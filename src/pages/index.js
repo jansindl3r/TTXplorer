@@ -9,7 +9,8 @@ const fontGridRule = ({ rows }) => ({
   gridTemplateRows: rows.map((row) => `[${row}] auto`).join(" "),
   gridAutoFlow: "column",
   gridRowGap: 10,
-  gap: 10,
+  gap: `${5}px ${25}px`,
+  justifyContent: "start",
 });
 
 const layoutRule = () => ({
@@ -78,14 +79,39 @@ function Index() {
         <script src="https://cdn.jsdelivr.net/pyodide/v0.27.2/full/pyodide.js"></script>
       </Head>
       <IndexContext.Provider value={{ rows, setRows }}>
-        <div className={css(layoutRule)}>
-          <div>
-            <Button onClick={handleOnAddFontClick}>Add Font</Button>
-          </div>
-          <div className={css(fontGridRule)}>
-            {numberOfFonts.map((font, index) => (
-              <FontColumn key={index} />
-            ))}
+        <div className={css(fontGridRule)}>
+          {numberOfFonts.map((font, index) => (
+            <FontColumn key={index} gridColumn={index + 1} />
+          ))}
+          <div
+            style={{
+              gridRowStart: 1,
+              gridRowEnd: -1,
+              position: "relative",
+              // display: "flex",
+            }}
+          >
+            <div
+              style={{
+                pointerEvents: "none",
+                border: "1px dashed red",
+                margin: -10,
+                borderRadius: 10,
+                // display: "flex",
+                // alignItems: "center",
+                pointerEvents: "none",
+                position: "absolute",
+                top: 0,
+                right: 0,
+                bottom: 0,
+                left: 0,
+              }}
+            ></div>
+            <Button
+              onClick={handleOnAddFontClick}
+            >
+              Add Font
+            </Button>
           </div>
         </div>
       </IndexContext.Provider>

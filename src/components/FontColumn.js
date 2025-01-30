@@ -33,9 +33,9 @@ function filterAllXmlComments(src) {
 
 export const TTXContext = React.createContext();
 
-function FontColumn() {
-  const { css } = useFela();
-  const {rows, setRows} = useContext(IndexContext);
+function FontColumn({gridColumn}) {
+  const { css } = useFela({gridColumn});
+  const { rows, setRows } = useContext(IndexContext);
   const [output, setOutput] = useState(null);
   const [fileName, setFileName] = useState(null);
   const rawXmlFont = useRef(null);
@@ -72,7 +72,7 @@ function FontColumn() {
   return (
     <>
       <TTXContext.Provider value={{ rawXmlFont }}>
-        <div className={css(buttonWrapperRule)}>
+        <div className={css(buttonWrapperRule)} style={{ gridColumn}}>
           <FileInput
             onChange={handleOnChange}
             label="1. Choose File"
@@ -81,7 +81,19 @@ function FontColumn() {
             Export
           </Button>
         </div>
-        {output && <FontDump src={filterAllXmlComments(output)} />}
+        {output && <FontDump src={filterAllXmlComments(output)} gridColumn={gridColumn}/>}
+        <div
+          style={{
+            border: "1px solid red",
+            margin: -10,
+            gridColumn,
+            gridRowStart: 1,
+            gridRowEnd: -1,
+            pointerEvents: "none",
+            borderRadius: 10,
+          }}
+        >
+        </div>
       </TTXContext.Provider>
     </>
   );

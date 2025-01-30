@@ -10,15 +10,12 @@ const tableListEntryRule = () => ({
   justifySelf: "flex-start",
   padding: 20,
   borderRadius: 10,
-  "& + *": {
-    marginTop: 5,
-  },
   "& > * + *": {
     marginTop: 10,
   },
 });
 
-function TableListEntry({ data, pathKeys }) {
+function TableListEntry({ data, pathKeys, gridColumn }) {
   const key = data.tagName;
   const [expanded, setExpanded] = useState();
   const { css } = useFela();
@@ -27,7 +24,7 @@ function TableListEntry({ data, pathKeys }) {
     setExpanded(!expanded);
   }
   return (
-    <div className={css(tableListEntryRule)} style={{ gridRow: data.tagName }}>
+    <div className={css(tableListEntryRule)} style={{ gridRow: data.tagName, gridColumn }}>
       <strong onClick={handleOnClick} className={css(clickableRule)}>{`${
         data.children.length ? (expanded ? "▲" : "▼") : ""
       } ${key}`}</strong>
@@ -36,14 +33,14 @@ function TableListEntry({ data, pathKeys }) {
   );
 }
 
-function FontDump({ src }) {
+function FontDump({ src, gridColumn }) {
   const parsedXml = new DOMParser().parseFromString(src, "application/xml");
-  const { css } = useFela();
   return [...parsedXml.children[0].children].map((child) => (
     <TableListEntry
       key={child.tagName}
       data={child}
       pathKeys={["&", child.tagName]}
+      gridColumn={gridColumn}
     />
   ));
 }
