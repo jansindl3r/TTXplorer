@@ -9,7 +9,7 @@ const attributesWrapperRule = () => ({
   display: "flex",
   alignItems: "baseline",
   "& > * + *": {
-    paddingLeft: 10,
+    marginLeft: 10,
   },
 });
 
@@ -18,54 +18,54 @@ const expandableTableRule = () => ({
   width: "100%",
 });
 
-function Row({ child, columnsKeys, level, pathKeys }) {
+function Row({ child, columnKeys, level, pathKeys }) {
   const [expanded, setExpanded] = useState(false);
   const { css } = useFela({ level });
-  const key = Object.keys(child)[0];
+  const tag = child.tagName;
 
   return (
     <>
       <div className={css(cellRule, rowLegendRule)}>
-        {"children" in child[key] ? (
+        {child.children.length ? (
           <i
             className={css(clickableRule)}
             onClick={() => setExpanded(!expanded)}
           >
-            {`${expanded ? "▲" : "▼"} ${key}`}
+            {`${expanded ? "▲" : "▼"} ${tag}`}
           </i>
-        ) : columnsKeys.length ? (
-          <i>{key}</i>
+        ) : columnKeys.length ? (
+          <i>{tag}</i>
         ) : (
+          // This could be a table as well, sometimes?
+          // update: maybe it is already?? 🤔
           <i className={css(attributesWrapperRule)}>
-            <span>{key}</span>
-            <Attributes data={child[key]} pathKeys={[...pathKeys]} />
+            <span>{tag}</span>
+            <Attributes data={child} pathKeys={[...pathKeys]} />
           </i>
         )}
       </div>
-      {columnsKeys.map((uniqueKey, index) => (
-        <div className={css(cellRule)}>
-          {child?.[key]?.[uniqueKey] && (
+      {columnKeys.map((columnKey, index) => (
+        <div key={columnKey + index} className={css(cellRule)}>
+          {(child.getAttribute(columnKey) || (columnKey === "textContent")) && (
             <Input
               type={
-                key === "assembly" && uniqueKey === "content"
+                child.tagName === "assembly" && uniqueKey === "textContent"
                   ? "textarea"
                   : "text"
               }
-              value={child[key][uniqueKey]}
+              value={child.getAttribute(columnKey) || child.textContent.trim()}
               pathKeys={pathKeys}
-              lastKey={uniqueKey}
+              lastKey={columnKey}
             />
           )}
         </div>
       ))}
-      
       <div className={css(expandableTableRule)}>
         {expanded && (
           <Table
             data={child}
             level={level}
-            pathKeys={[...pathKeys]}
-            expanded={expanded}
+            pathKeys={pathKeys}
           />
         )}
       </div>

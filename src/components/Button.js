@@ -10,9 +10,13 @@ const buttonRule = {
   display: "inline-block",
 };
 
-function Button({ tag="div", children }) {
+function Button({ tag = "div", onClick, children }) {
   const { css } = useFela();
-  return React.createElement(tag, { className: css(buttonRule) }, children);
+  return React.createElement(
+    tag,
+    { className: css(buttonRule), ...(onClick ? { onClick } : {}) },
+    children
+  );
 }
 
 export default Button;

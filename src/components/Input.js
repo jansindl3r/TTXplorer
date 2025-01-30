@@ -36,20 +36,24 @@ function Input({ type, value, pathKeys, lastKey }) {
   value = value?.trim();
 
   function handleOnChange(e) {
-    const { value } = e.target;
+    const { value } = e.target
     const path = buildQuerySelectorPath(pathKeys);
     let originalValue;
-    if (lastKey === "content") {
-      originalValue = rawXmlFont.current.querySelector(path).textContent;
-      rawXmlFont.current.querySelector(path).textContent = value;
-    } else {
-      originalValue = rawXmlFont.current
+    try {
+      if (lastKey === "textContent") {
+        originalValue = rawXmlFont.current.querySelector(path).textContent;
+        rawXmlFont.current.querySelector(path).textContent = value;
+      } else {
+        originalValue = rawXmlFont.current
         .querySelector(path)
         .getAttribute(lastKey);
-      rawXmlFont.current.querySelector(path).setAttribute(lastKey, value);
+        rawXmlFont.current.querySelector(path).setAttribute(lastKey, value);
+      }
+      console.log({ originalValue });
+      setSize(Math.max(value.length, 4));
+    } catch (e) {
+      console.error(e);
     }
-    console.log({ originalValue });
-    setSize(Math.max(value.length, 4));
   }
 
   if (type === "textarea") {

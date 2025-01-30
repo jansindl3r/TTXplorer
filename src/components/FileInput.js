@@ -7,7 +7,8 @@ function FileInput({ onChange, label: initialLabel }) {
     if (e.target.files.length === 0) {
       setLabel(initialLabel);
     } else {
-      setLabel(e.target.files[0].name);
+      const { name } = e.target.files[0];
+      setLabel(name);
       if (onChange) {
         onChange(e);
       }

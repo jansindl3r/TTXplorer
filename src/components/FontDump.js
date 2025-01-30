@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { convertXML } from "simple-xml-to-json";
 import { useFela } from "react-fela";
 import { clickableRule } from "./commonRules";
 import Table from "./Table";
@@ -23,32 +22,31 @@ const mainRule = () => ({
   alignItems: "flex-start",
 });
 
-function TableListEntry({ data }) {
-  const key = Object.keys(data)[0];
+function TableListEntry({ data, pathKeys }) {
+  const key = data.tagName
   const [expanded, setExpanded] = useState();
   const { css } = useFela();
-
+  
   function handleOnClick() {
     setExpanded(!expanded);
   }
   return (
     <div className={css(tableListEntryRule)}>
-      <strong onClick={handleOnClick} className={css(clickableRule)}>{`${
-        expanded ? "▲" : "▼"
+       <strong onClick={handleOnClick} className={css(clickableRule)}>{`${
+        data.children.length ? expanded ? "▲" : "▼" : ""
       } ${key}`}</strong>
-      {expanded && <Table data={data} level={0} pathKeys={["&"]} />}
+      {expanded && <Table data={data} level={0} pathKeys={pathKeys} />}
     </div>
   );
 }
 
 function FontDump({ src }) {
-  const json = convertXML(src);
-  const key = Object.keys(json)[0];
+  const parsedXml =  new DOMParser().parseFromString(src, "application/xml");
   const { css } = useFela();
   return (
     <div className={css(mainRule)}>
-      {json[key].children.map((child) => (
-        <TableListEntry key={key} data={child} />
+      {[...parsedXml.children[0].children].map((child) => (
+          <TableListEntry key={child.tagName} data={child} pathKeys={["&", child.tagName]} />
       ))}
     </div>
   );

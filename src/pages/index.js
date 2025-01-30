@@ -10,6 +10,7 @@ const buttonWrapperRule = {
   "& > * + *": {
     marginLeft: 10,
   },
+  marginBottom: 10,
 };
 
 async function processFont(file) {
@@ -34,9 +35,11 @@ export const TTXContext = React.createContext();
 function Index() {
   const { css } = useFela();
   const [output, setOutput] = useState(null);
+  const [fileName, setFileName] = useState(null);
   const rawXmlFont = useRef(null);
 
   async function handleOnChange(e) {
+    setFileName(e.target.files[0].name);
     const arrayBuffer = await e.target.files[0].arrayBuffer();
     const fontXml = await processFont(arrayBuffer);
     setOutput(fontXml);
@@ -53,7 +56,7 @@ function Index() {
       .then((base64Data) => {
         const link = document.createElement("a");
         link.href = `data:application/octet-stream;base64,${base64Data}`;
-        link.download = "file.ttf";
+        link.download = `TTXplorer_${fileName}`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
