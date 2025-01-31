@@ -15,12 +15,6 @@ button {
     text-align: center;
 }
 
-
-button:disabled, input:disabled, label[data-disabled="true"] {
-    color: silver;
-    opacity: .5;
-}
-
 main {
     display: flex;
     flex-direction: column;

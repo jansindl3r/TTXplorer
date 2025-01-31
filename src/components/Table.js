@@ -1,11 +1,14 @@
 import React, { useContext, useState } from "react";
 import Row from "./Row";
 import { useFela } from "react-fela";
-import { cellRule, rowLegendRule } from "./commonRules";
+import { cellRule, headerCellRule, rowLegendRule } from "./commonRules";
 import { getColumnsKeys } from "@/misc";
 const INDENT = 1;
 
-const tableRule = ({ level, columnKeysLength }) => ({
+const tableRule = ({ theme, level, columnKeysLength }) => ({
+  zIndex: level * 10,
+  position: "relative",
+  background: theme.background,
   paddingLeft: `${level * INDENT}ch`,
   extend: [
     {
@@ -39,7 +42,7 @@ function Table({ data, level, pathKeys }) {
         <div className={css(cellRule, rowLegendRule)}></div>
       ) : null}
       {columnKeys.map((columnKey) => (
-        <strong className={css(cellRule)}>{columnKey}</strong>
+        <strong className={css(cellRule, headerCellRule)}>{columnKey}</strong>
       ))}
       {[...data.children]?.map((child, index) => (
         <Row

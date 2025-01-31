@@ -8,10 +8,14 @@ import FileInput from "@/components/FileInput";
 const buttonWrapperRule = {
   display: "flex",
   "& > * + *": {
-    marginLeft: 10,
+    marginLeft: 5,
   },
-  marginBottom: 10,
+  marginBottom: 20,
 };
+
+const loadingRule = {
+  color: "white"
+}
 
 async function processFont(file) {
   const processFontPython = window.pyodide.globals.get("process_font");
@@ -36,19 +40,28 @@ function Index() {
   const { css } = useFela();
   const [output, setOutput] = useState(null);
   const [fileName, setFileName] = useState(null);
+  const [loadingPyodide, setLoadingPyodide] = useState(true);
   const rawXmlFont = useRef(null);
 
-  async function handleOnChange(e) {
-    setFileName(e.target.files[0].name);
-    const arrayBuffer = await e.target.files[0].arrayBuffer();
-    const fontXml = await processFont(arrayBuffer);
-    setOutput(fontXml);
-    const parser = new DOMParser();
-    const xmlData = parser.parseFromString(fontXml, "application/xml");
-    rawXmlFont.current = xmlData;
+  function handleOnChange(e) {
+    return e.target.files[0].arrayBuffer()
+      .then((arrayBuffer) => processFont(arrayBuffer))
+      .then((fontXml) => {
+        setOutput(fontXml);
+        const parser = new DOMParser();
+        const xmlData = parser.parseFromString(fontXml, "application/xml");
+        rawXmlFont.current = xmlData;
+      })
+      .catch((error) => {
+        console.error("Error processing font:", error);
+      })
+      .finally((response) => {
+        console.log(response)
+        setFileName(e.target.files[0].name);
+      })
   }
 
-  async function handleOnExport(e) {
+  function handleOnExport(e) {
     const rawXmlFontString = new XMLSerializer().serializeToString(
       rawXmlFont.current
     );
@@ -67,9 +80,11 @@ function Index() {
   }
 
   useEffect(() => {
+
     loadPyodide().then((pyodide) => {
       window.pyodide = pyodide;
       window.pyodide.loadPackage("fonttools").then(() => {
+        setLoadingPyodide(false);
         window.pyodide.runPythonAsync(`
           import io
           import base64
@@ -110,13 +125,15 @@ function Index() {
           <div className={css(buttonWrapperRule)}>
             <FileInput
               onChange={handleOnChange}
-              label="1. Choose File"
+              label="Choose File"
+              accept=".ttf,.otf"
+              disabled={loadingPyodide}
             ></FileInput>
-            <Button type="button" onClick={handleOnExport}>
-              2. Export
+            <Button tag="button" onClick={handleOnExport} disabled={!output}>
+              Export
             </Button>
-            <Button type="button">3. Add Another Font to Compare (To Do)</Button>
           </div>
+          {loadingPyodide && <span className={css(loadingRule)}>Loading Libraries...</span>}
           {output && <FontDump src={filterAllXmlComments(output)} />}
         </div>
       </TTXContext.Provider>

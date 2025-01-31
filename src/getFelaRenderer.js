@@ -102,6 +102,7 @@ export default function getRenderer() {
       unit('px', {
         fontSize: 'px',
         lineHeight: 'px',
+        zIndex: '',
       }),
       ...webPreset,
     ],

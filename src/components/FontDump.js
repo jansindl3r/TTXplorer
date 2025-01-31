@@ -4,10 +4,10 @@ import { clickableRule } from "./commonRules";
 import Table from "./Table";
 
 
-const tableListEntryRule = () => ({
-  background: "#F2F2F2",
-  padding: 20,
-  borderRadius: 10,
+const tableListEntryRule = ({theme}) => ({
+  background: theme.background,
+  ...theme.buttonPadding,
+  borderRadius: theme.borderRadius,
   "& + *": {
     marginTop: 5,
   },
@@ -32,9 +32,9 @@ function TableListEntry({ data, pathKeys }) {
   }
   return (
     <div className={css(tableListEntryRule)}>
-       <strong onClick={handleOnClick} className={css(clickableRule)}>{`${
+       <span onClick={handleOnClick} className={css(clickableRule)}>{`${
         data.children.length ? expanded ? "▲" : "▼" : ""
-      } ${key}`}</strong>
+      } ${key}`}</span>
       {expanded && <Table data={data} level={0} pathKeys={pathKeys} />}
     </div>
   );
