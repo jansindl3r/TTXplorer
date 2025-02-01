@@ -12,6 +12,8 @@ const buttonRule = ({ theme, disabled }) => {
     cursor: "pointer",
     display: "inline-block",
     width: "auto",
+    fontSize: "inherit",
+    fontFamily: "inherit",
     extend: [
       {
         condition: disabled,

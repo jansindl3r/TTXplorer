@@ -16,11 +16,11 @@ const tableListEntryRule = ({theme}) => ({
   },
 });
 
-const mainRule = () => ({
+const mainRule = {
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-start",
-});
+}
 
 function TableListEntry({ data, pathKeys }) {
   const key = data.tagName

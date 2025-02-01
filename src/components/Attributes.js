@@ -3,13 +3,13 @@ import { useFela } from "react-fela";
 import Input from "./Input";
 
 
-const attributesRule = () => ({
+const attributesRule = {
   display: "flex",
   alignItems: "baseline",
   "& > * + *": {
     marginLeft: 10,
   },
-});
+}
 
 function Attributes({ data, pathKeys }) {
   const { css } = useFela();

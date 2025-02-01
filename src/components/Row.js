@@ -5,18 +5,18 @@ import { cellRule, clickableRule, rowLegendRule } from "./commonRules";
 import Table from "./Table";
 import Attributes from "./Attributes";
 
-const attributesWrapperRule = () => ({
+const attributesWrapperRule = {
   display: "flex",
   alignItems: "baseline",
   "& > * + *": {
     marginLeft: 10,
   },
-});
+}
 
-const expandableTableRule = () => ({
+const expandableTableRule = {
   gridColumn: "1 / -1",
   width: "100%",
-});
+}
 
 function Row({ child, columnKeys, level, pathKeys }) {
   const [expanded, setExpanded] = useState(false);
